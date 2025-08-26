@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн Чат</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chat { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+        #message { width: 80%; }
+        #send { width: 15%; }
+        #nicknamePrompt { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Онлайн Чат</h1>
+    <div id="nicknamePrompt">
+        <label for="nickname">Введите никнейм:</label>
+        <input type="text" id="nickname">
+        <button onclick="setNickname()">Подтвердить</button>
+    </div>
+    
+    <div id="chatContainer" style="display: none;">
+        <div id="chat"></div>
+        <input type="text" id="message" placeholder="Введите сообщение...">
+        <button id="send" onclick="sendMessage()">Отправить</button>
+    </div>
+
+    <script>
+        let nickname = '';
+        const chatContainer = document.getElementById('chatContainer');
+        const chat = document.getElementById('chat');
+
+        function setNickname() {
+            nickname = document.getElementById('nickname').value;
+            if (nickname) {
+                document.getElementById('nicknamePrompt').style.display = 'none';
+                chatContainer.style.display = 'block';
+                loadMessages();
+            }
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            
+            if (message) {
+                const msg = `${nickname}: ${message}`;
+                saveMessage(msg);
+                displayMessage(msg);
+                messageInput.value = ''; // Очистка текстового поля
+            }
+        }
+
+        function saveMessage(message) {
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push(message);
+            localStorage.setItem('messages', JSON.stringify(messages));
+        }
+
+        function loadMessages() {
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.forEach(displayMessage);
+        }
+
+        function displayMessage(message) {
+            const messageElem = document.createElement('div');
+            messageElem.textContent = message;
+            chat.appendChild(messageElem);
+            chat.scrollTop = chat.scrollHeight; // Прокрутка вниз при новых сообщениях
+        }
+    </script>
+</body>
+</html>
